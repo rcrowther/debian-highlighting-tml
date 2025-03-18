@@ -1,3 +1,7 @@
-GTK highlighting for TML markup. Works in GTKSourceview-based code such as Gedit, xed etc (failed in an attempt to get this highlighting working in Gedit).
+GTK highlighting for TML markup. Works in GTKSourceview-based code such as Gedit, xed etc. (failed in an attempt to get this highlighting working in Gedit)
 
-The instructions are in the INSTALL file. There's a shell script highlight_gtk_tml, though I'm not guarenteeing it.
+The instructions are in the INSTALL file. There's a shell script `highlight_gtk_tml`, though I'm not guarenteeing it. Needs sudo permissions. Use,
+
+```
+./highlight_gtk_tml
+```
