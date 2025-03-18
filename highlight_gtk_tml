@@ -1,40 +1,38 @@
 #! /bin/bash
 
 echo "Must be run from folder containing files" 
+echo "(needs sudo permissions!)"
 
 ## Add to XDG path
-echo -e "\nAdd to XDG paths"
-echo "(will request sudo)"
+echo -e "\nAdding to XDG paths..."
 
-sudo cat >> /etc/profile.d/xdg_paths.sh << 'END'
-export XDG_DATA_DIRS="$XDG_DATA_DIRS:/home/rob/.local/share"
-END
+sudo echo 'export XDG_DATA_DIRS="$XDG_DATA_DIRS:/home/rob/.local/share"' | sudo tee -a /etc/profile.d/xdg_paths.sh > /dev/null 
+
 
 # check registered,
 # printenv XDG_DATA_DIRS
-echo "check new desktop configuration path registered:"
-echo "printenv XDG_DATA_DIRS"
+echo "(to check new desktop configuration path registered: printenv XDG_DATA_DIRS)"
 
 
 ## Set MIME
-echo -e "\nSet MIME"
+echo -e "\nSetting new MIME type..."
+mkdir -p ~/.local/share/mime/packages
 cp tml.xml ~/.local/share/mime/packages
-update-mime-database -V ~/.local/share/mime/
+update-mime-database -n ~/.local/share/mime/
 
 # Check mime registered,
 # cat ~/.local/share/mime/types
-echo "Check MIME registered:"
-echo "cat ~/.local/share/mime/types"
+echo "(to check new MIME registered: cat ~/.local/share/mime/types)"
 
 
 ## Add definition
-echo -e "\nAdd TML definition"
+echo -e "\nAdding TML definition..."
 mkdir -p ~/.local/share/gtksourceview-3.0/language-specs/
 cp tml.lang ~/.local/share/gtksourceview-3.0/language-specs/
 
 
 
-echo -e "\n!!!Restart computer to complete" 
+echo -e "\n!!! Restart computer to complete" 
 echo "(...or new config path and definition will not register)"
 
 
