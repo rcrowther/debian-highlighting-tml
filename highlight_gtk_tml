@@ -1,0 +1,40 @@
+#! /bin/bash
+
+echo "Must be run from folder containing files" 
+
+## Add to XDG path
+echo -e "\nAdd to XDG paths"
+echo "(will request sudo)"
+
+sudo cat >> /etc/profile.d/xdg_paths.sh << 'END'
+export XDG_DATA_DIRS="$XDG_DATA_DIRS:/home/rob/.local/share"
+END
+
+# check registered,
+# printenv XDG_DATA_DIRS
+echo "check new desktop configuration path registered:"
+echo "printenv XDG_DATA_DIRS"
+
+
+## Set MIME
+echo -e "\nSet MIME"
+cp tml.xml ~/.local/share/mime/packages
+update-mime-database -V ~/.local/share/mime/
+
+# Check mime registered,
+# cat ~/.local/share/mime/types
+echo "Check MIME registered:"
+echo "cat ~/.local/share/mime/types"
+
+
+## Add definition
+echo -e "\nAdd TML definition"
+mkdir -p ~/.local/share/gtksourceview-3.0/language-specs/
+cp tml.lang ~/.local/share/gtksourceview-3.0/language-specs/
+
+
+
+echo -e "\n!!!Restart computer to complete" 
+echo "(...or new config path and definition will not register)"
+
+
