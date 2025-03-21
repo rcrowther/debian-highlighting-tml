@@ -11,19 +11,34 @@ cp ~/Code/Gravel/Silt/os/tml.lang ~/.local/share/gtksourceview-3.0/language-spec
 
   <styles>
     <style id="header-text"       name="Heading Text"          map-to="def:statement"/>
-    <style id="mark"              name="Mark"                  map-to="def:special-char"/>
-    <style id="arg-elem"          name="Element Arg"           map-to="def:identifier"/>
-    <!-- def:type is bold, better if not -->
-    <style id="arg-class"         name="Class Arg"             map-to="def:preprocessor"/>
-    <style id="arg-url"           name="URL Arg"               map-to="def:underlined"/>
-    <style id="arg-string"        name="String Arg"            map-to="def:string"/>
-    <style id="mark-uml"          name="UML Mark"              map-to="def:special-char"/>
+    <style id="mark-primary"      name="Primary Mark"          map-to="def:identifier"/>
+    <style id="arg-value-elem"    name="Element Arg"           map-to="def:identifier"/>
+    <!-- def:type is bold -->
+    <style id="arg-mark"          name="Mark"                  map-to="def:type"/>
+    <style id="arg-value"         name="Class Arg"             map-to="def:string"/>
+    <style id="arg-value-url"     name="URL Arg"               map-to="def:underlined"/>
+    <style id="string"            name="String Arg"            map-to="def:string"/>
+    <style id="mark-uml"          name="UML Mark"              map-to="def:preprocessor"/>
   </styles>
 
   <definitions>
-    <!--  handles elem ~ Option(cssClass) ~ Option(URL) ~ Optionl(string) -->
-    <!-- is this backtracking? -->
-    <define-regex id="mark-args">(\w+)?(\.\w+)?(?:\(([^)]*)\))?(\"[^"]*\")?</define-regex>
+    <!--
+    Why the octals? They're brackets/parenthesis for URL/URI attributes. 
+    Octals don't confuse compilers or people, and are easier to maintain
+    than escaped bracket symbols.
+    Why use this blob of regex, why not the tidy container contexts?
+    Because container contexts are for scattered inserts into a context,
+    not strict orderong which TML is. This way intention=clear R.C.
+    = captures
+    elem, 
+    id mark, id value, 
+    klass mark, klass value, 
+    URL mark, URL value, URL mark
+    string mark, string value, string mark
+    11 captures total
+    (fully optional)
+    -->
+    <define-regex id="mark-args-no-elem">(?:(\#)(\w+))?(?:(\.)(\w+))?(?:(\050)([^\051]*)(\051))?(?:(\")([^"]*)(\"))?</define-regex>
     <define-regex id="punctuation">[\(\)\[\]\,\:\s]</define-regex>
     <define-regex id="not-punctuation">[^\(\)\[\]\,\:\s]*</define-regex>
     <define-regex id="identifier">[a-zA-Z]\%{not-punctuation}*</define-regex>
@@ -32,72 +47,163 @@ cp ~/Code/Gravel/Silt/os/tml.lang ~/.local/share/gtksourceview-3.0/language-spec
 
     <!-- Comments -->
     <context id="headings">
-      <match>^(\=+)\s+([^\n]+)</match>
+      <match>^(\={1,6})\%{mark-args-no-elem}\s+(?'header_text'[^\n]+)</match>
       <include>
-        <context sub-pattern="1" style-ref="mark" />
-        <context sub-pattern="2" style-ref="header-text" />
+        <!-- mark -->
+        <context sub-pattern="1" style-ref="mark-primary" />
+        <!-- id -->
+        <context sub-pattern="2" style-ref="arg-mark" />
+        <context sub-pattern="3" style-ref="arg-value" />
+        <!-- klass -->
+        <context sub-pattern="4" style-ref="arg-mark" />
+        <context sub-pattern="5" style-ref="arg-value" />
+        <!-- URL -->
+        <context sub-pattern="6" style-ref="arg-mark" />
+        <context sub-pattern="7" style-ref="arg-value-url" />
+        <context sub-pattern="8" style-ref="arg-mark" />
+        <!-- String -->
+        <context sub-pattern="9" style-ref="arg-mark" />
+        <context sub-pattern="10" style-ref="arg-value" />
+        <context sub-pattern="11" style-ref="arg-mark" />
+        
+        <context sub-pattern="header_text" style-ref="header-text" />
       </include>
     </context>  
 
-    <context id="mark-block" class="no-spell-check">
-      <!-- list items do not duplicate, block marks can -->
-      <match>^([\-~:]|[#+?]{1,2})\%{mark-args}</match>
+    <context id="mark-block">
+      <match>^([#])([#]|\w+)?\%{mark-args-no-elem}</match>
       <include>
-        <context sub-pattern="1" style-ref="mark" />
-        <context sub-pattern="2" style-ref="arg-elem" />
-        <context sub-pattern="3" style-ref="arg-class" />
-        <context sub-pattern="4" style-ref="arg-url" />
-        <context sub-pattern="5" style-ref="arg-string" />
+        <!-- mark -->
+        <context sub-pattern="1" style-ref="mark-primary" />
+        <!-- elem -->
+        <context sub-pattern="2" style-ref="arg-value-elem" />        
+        <!-- id -->
+        <context sub-pattern="3" style-ref="arg-mark" />
+        <context sub-pattern="4" style-ref="arg-value" />
+        <!-- klass -->
+        <context sub-pattern="5" style-ref="arg-mark" />
+        <context sub-pattern="6" style-ref="arg-value" />
+        <!-- URL -->
+        <context sub-pattern="7" style-ref="arg-mark" />
+        <context sub-pattern="8" style-ref="arg-value-url" />
+        <context sub-pattern="9" style-ref="arg-mark" />
+        <!-- String -->
+        <context sub-pattern="10" style-ref="arg-mark" />
+        <context sub-pattern="11" style-ref="arg-value" />
+        <context sub-pattern="12" style-ref="arg-mark" />
+      </include>
+    </context>
+    
+    <context id="mark-list">
+      <match>^([+])([+]|\w+)?\%{mark-args-no-elem}</match>
+      <include>
+        <!-- mark -->
+        <context sub-pattern="1" style-ref="mark-primary" />
+        <!-- elem -->
+        <context sub-pattern="2" style-ref="arg-value-elem" />        
+        <!-- id -->
+        <context sub-pattern="3" style-ref="arg-mark" />
+        <context sub-pattern="4" style-ref="arg-value" />
+        <!-- klass -->
+        <context sub-pattern="5" style-ref="arg-mark" />
+        <context sub-pattern="6" style-ref="arg-value" />
+        <!-- URL -->
+        <context sub-pattern="7" style-ref="arg-mark" />
+        <context sub-pattern="8" style-ref="arg-value-url" />
+        <context sub-pattern="9" style-ref="arg-mark" />
+        <!-- String -->
+        <context sub-pattern="10" style-ref="arg-mark" />
+        <context sub-pattern="11" style-ref="arg-value" />
+        <context sub-pattern="12" style-ref="arg-mark" />
       </include>
     </context>
 
-    <context id="mark-inline" class="no-spell-check">
-      <match>(\{)\%{mark-args}(\s[^\}]*)?(\})</match>
+    <!--
+    A stab at list items. They often only exist within a list context,
+    and must duplicate the marrk for default, but this is gonna work for
+    most. Risks a ':' clash with UML, which the spec avoids R.C. 
+    -->
+    <context id="mark-list-item">
+      <match>^([\-\~\:])([\-\~\:]|\w+)?\%{mark-args-no-elem}</match>
       <include>
-        <context sub-pattern="1" style-ref="mark" />
-        <context sub-pattern="2" style-ref="arg-elem" />
-        <context sub-pattern="3" style-ref="arg-class" />
-        <context sub-pattern="4" style-ref="arg-url" />
-        <context sub-pattern="5" style-ref="arg-string" />
-        <context sub-pattern="3" style-ref="mark" />
+        <!-- mark -->
+        <context sub-pattern="1" style-ref="mark-primary" />
+        <!-- elem -->
+        <context sub-pattern="2" style-ref="arg-value-elem" />        
+        <!-- id -->
+        <context sub-pattern="3" style-ref="arg-mark" />
+        <context sub-pattern="4" style-ref="arg-value" />
+        <!-- klass -->
+        <context sub-pattern="5" style-ref="arg-mark" />
+        <context sub-pattern="6" style-ref="arg-value" />
+        <!-- URL -->
+        <context sub-pattern="7" style-ref="arg-mark" />
+        <context sub-pattern="8" style-ref="arg-value-url" />
+        <context sub-pattern="9" style-ref="arg-mark" />
+        <!-- String -->
+        <context sub-pattern="10" style-ref="arg-mark" />
+        <context sub-pattern="11" style-ref="arg-value" />
+        <context sub-pattern="12" style-ref="arg-mark" />
+      </include>      
+    </context>
+    
+    <context id="mark-inline" class="no-spell-check">
+      <match>(\{)(\{|\w+)\%{mark-args-no-elem}(?:\s[^\}]*)?(\})</match>
+      <include>
+        <!-- mark -->
+        <context sub-pattern="1" style-ref="mark-primary" />
+        <!-- elem -->
+        <context sub-pattern="2" style-ref="arg-value-elem" />
+        <!-- id -->
+        <context sub-pattern="3" style-ref="arg-mark" />
+        <context sub-pattern="4" style-ref="arg-value" />
+        <!-- klass -->
+        <context sub-pattern="5" style-ref="arg-mark" />
+        <context sub-pattern="6" style-ref="arg-value" />
+        <!-- URL -->
+        <context sub-pattern="7" style-ref="arg-mark" />
+        <context sub-pattern="8" style-ref="arg-value-url" />
+        <context sub-pattern="9" style-ref="arg-mark" />
+        <!-- String -->
+        <context sub-pattern="10" style-ref="arg-mark" />
+        <context sub-pattern="11" style-ref="arg-value" />
+        <context sub-pattern="12" style-ref="arg-mark" />
+        <!-- mark -->
+        <context sub-pattern="13" style-ref="mark-primary" />
       </include>
     </context>
 
     
-    <context id="single-quoted-string" end-at-line-end="true">
-      <start>('')</start>
-      <end>(')</end>
+    <!-- UML -->      
+    <context id="single-quoted-string">
+      <match>(\'\')[^']*(\')</match>
       <include>
-        <context sub-pattern="1" where="start" style-ref="def:string" />
-        <context sub-pattern="1" where="end" style-ref="def:string" />
+        <context sub-pattern="1" style-ref="string" />
+        <context sub-pattern="2" style-ref="string" />
       </include>
     </context>
 
-
-    <!-- UML -->      
-    <context id="double-quoted-string" end-at-line-end="true">
-      <start>("")</start>
-      <end>(")</end>
+    <context id="double-quoted-string">
+      <match>(\"\")[^"]*(\")</match>
       <include>
-        <context sub-pattern="1" where="start" style-ref="def:string" />
-        <context sub-pattern="1" where="end" style-ref="def:string" />
+        <context sub-pattern="1" style-ref="string" />
+        <context sub-pattern="2" style-ref="string" />
       </include>
     </context>    
 
-    <context id="guillemet" end-at-line-end="true" class="no-spell-check">
-      <start>(&lt;&lt;)</start>
-      <end>(&gt;&gt;)</end>
+    <context id="guillemet">
+      <match>(&lt;&lt;)[^\&gt;]*(&gt;&gt;)</match>
       <include>
-        <context sub-pattern="1" where="start" style-ref="def:string" />
-        <context sub-pattern="1" where="end" style-ref="def:string" />
+        <context sub-pattern="1" style-ref="string" />
+        <context sub-pattern="2" style-ref="string" />
       </include>
     </context>      
 
     <context id="uml-special" class="no-spell-check">
       <!-- Onjects like elipsis are self-explanatory -->
-      <match>((?:\([ctr]\))|(?::m[\-xo]))</match>
+      <match>(?:\([ctr]\))|(?:\:m[\-xo])</match>
       <include>
-        <context sub-pattern="1" style-ref="mark-uml"/>
+        <context sub-pattern="0" style-ref="mark-uml"/>
       </include>
     </context>
     
@@ -106,6 +212,8 @@ cp ~/Code/Gravel/Silt/os/tml.lang ~/.local/share/gtksourceview-3.0/language-spec
         <context ref="def:shebang"/>
         <context ref="headings"/>
         <context ref="mark-block"/>
+        <context ref="mark-list"/>
+        <context ref="mark-list-item"/>
         <context ref="mark-inline"/>
         <!-- UML -->
         <context ref="single-quoted-string"/>

@@ -1,0 +1,47 @@
+= Test
+
+== Titles
+===== Deep Title
+======= Too deep title
+==#id.klass(https://gitlab.gnome.org/GNOME)"string" Heading with attributes
+
+
+
+== Blocks
+##
+Default block
+#
+
+#div#id.klass(https://gitlab.gnome.org/GNOME)"string"
+Block with attributees
+#
+
+== Lists
+++
+- default list
++
+
++dl#id.klass(https://gitlab.gnome.org/GNOME)"string"
+~ term
+: definition
++
+
+
+== Inline
+Full argumented, default elem, inline,
+ {{#id.klass(https://gitlab.gnome.org/GNOME)"string" display text}
+
+HTML anchor (frequent)
+ {a(https://gitlab.gnome.org/GNOME) display text}
+
+
+""Double quoted string"
+''single quoted string'
+String's a thing should not react to inverted comma.
+<<guillemet>>
+
+
+
+== UML
+(c) (t) (r) :mx :mo
+
