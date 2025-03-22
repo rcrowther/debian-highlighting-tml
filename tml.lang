@@ -9,15 +9,16 @@ cp ~/Code/Gravel/Silt/os/tml.lang ~/.local/share/gtksourceview-3.0/language-spec
     <property name="globs">*.tml</property>
   </metadata>
 
+  <!-- mspired by the XML highlighter (maybe lightweight? R.C.) -->
   <styles>
     <style id="header-text"       name="Heading Text"          map-to="def:statement"/>
     <style id="mark-primary"      name="Primary Mark"          map-to="def:identifier"/>
-    <style id="arg-value-elem"    name="Element Arg"           map-to="def:identifier"/>
+    <style id="arg-value-elem"    name="Arg Value Elem"        map-to="def:identifier"/>
     <!-- def:type is bold -->
     <style id="arg-mark"          name="Mark"                  map-to="def:type"/>
-    <style id="arg-value"         name="Class Arg"             map-to="def:string"/>
-    <style id="arg-value-url"     name="URL Arg"               map-to="def:underlined"/>
-    <style id="string"            name="String Arg"            map-to="def:string"/>
+    <style id="arg-value"         name="Arg Value"             map-to="def:string"/>
+    <style id="arg-value-url"     name="Arg Value URL"         map-to="def:underlined"/>
+    <style id="string"            name="String Marks"          map-to="def:string"/>
     <style id="mark-uml"          name="UML Mark"              map-to="def:preprocessor"/>
   </styles>
 
@@ -45,7 +46,7 @@ cp ~/Code/Gravel/Silt/os/tml.lang ~/.local/share/gtksourceview-3.0/language-spec
 
 
 
-    <!-- Comments -->
+    <!-- Headings use a different form of block-level opening mark -->
     <context id="headings">
       <match>^(\={1,6})\%{mark-args-no-elem}\s+(?'header_text'[^\n]+)</match>
       <include>
@@ -70,32 +71,14 @@ cp ~/Code/Gravel/Silt/os/tml.lang ~/.local/share/gtksourceview-3.0/language-spec
       </include>
     </context>  
 
+
+    <!--
+    A hook at things that will mark. Marks more than may be accepttable
+    to some parsers (e.g. '#?' is an ok opener). No attempt to capture, 
+    for example, open/close errors. But efficient. 
+    -->
     <context id="mark-block">
-      <match>^([#])([#]|\w+)?\%{mark-args-no-elem}</match>
-      <include>
-        <!-- mark -->
-        <context sub-pattern="1" style-ref="mark-primary" />
-        <!-- elem -->
-        <context sub-pattern="2" style-ref="arg-value-elem" />        
-        <!-- id -->
-        <context sub-pattern="3" style-ref="arg-mark" />
-        <context sub-pattern="4" style-ref="arg-value" />
-        <!-- klass -->
-        <context sub-pattern="5" style-ref="arg-mark" />
-        <context sub-pattern="6" style-ref="arg-value" />
-        <!-- URL -->
-        <context sub-pattern="7" style-ref="arg-mark" />
-        <context sub-pattern="8" style-ref="arg-value-url" />
-        <context sub-pattern="9" style-ref="arg-mark" />
-        <!-- String -->
-        <context sub-pattern="10" style-ref="arg-mark" />
-        <context sub-pattern="11" style-ref="arg-value" />
-        <context sub-pattern="12" style-ref="arg-mark" />
-      </include>
-    </context>
-    
-    <context id="mark-list">
-      <match>^([+])([+]|\w+)?\%{mark-args-no-elem}</match>
+      <match>^([#>?+])([#>?+]|\w+)?\%{mark-args-no-elem}</match>
       <include>
         <!-- mark -->
         <context sub-pattern="1" style-ref="mark-primary" />
@@ -118,10 +101,10 @@ cp ~/Code/Gravel/Silt/os/tml.lang ~/.local/share/gtksourceview-3.0/language-spec
       </include>
     </context>
 
+
     <!--
-    A stab at list items. They often only exist within a list context,
-    and must duplicate the marrk for default, but this is gonna work for
-    most. Risks a ':' clash with UML, which the spec avoids R.C. 
+    A stab at list items. With no context risks a ':' clash with UML, 
+    which the spec avoids R.C. 
     -->
     <context id="mark-list-item">
       <match>^([\-\~\:])([\-\~\:]|\w+)?\%{mark-args-no-elem}</match>
@@ -212,7 +195,6 @@ cp ~/Code/Gravel/Silt/os/tml.lang ~/.local/share/gtksourceview-3.0/language-spec
         <context ref="def:shebang"/>
         <context ref="headings"/>
         <context ref="mark-block"/>
-        <context ref="mark-list"/>
         <context ref="mark-list-item"/>
         <context ref="mark-inline"/>
         <!-- UML -->

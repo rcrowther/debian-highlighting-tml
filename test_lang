@@ -26,22 +26,33 @@ Block with attributees
 : definition
 +
 
+== Escape block
+?xml
+Code or summat else
+?
+
+== Blockquote
+>>
+Default block marks.
+>
+>>#id.klass(https://gitlab.gnome.org/GNOME)"string"
+Full argument list
+>
 
 == Inline
 Full argumented, default elem, inline,
  {{#id.klass(https://gitlab.gnome.org/GNOME)"string" display text}
 
-HTML anchor (frequent)
+HTML anchors (frequent)
  {a(https://gitlab.gnome.org/GNOME) display text}
+ {a(https://gitlab.gnome.org/GNOME)}
 
 
+== UML
 ""Double quoted string"
 ''single quoted string'
 String's a thing should not react to inverted comma.
 <<guillemet>>
 
-
-
-== UML
 (c) (t) (r) :mx :mo
 
