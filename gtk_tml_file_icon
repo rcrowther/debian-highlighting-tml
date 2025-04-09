@@ -1,0 +1,30 @@
+#! /bin/bash
+
+echo "Insert the icon in theme Mint-Y..."
+mkdir -p /usr/share/icons/Mint-Y/scalable/mimetypes
+cp text-x-tml.svg /usr/share/icons/Mint-Y/scalable/mimetypes
+
+echo "Add search directory to index..."
+sed -i 's/Directories=/Directories=scalable/mimetypes,/' /usr/share/icons/Mint-Y/index.theme
+
+echo "Insert to index definition stanza..."
+
+# i.e.
+# ###################
+# 
+# [scalable/mimetypes]
+# Size=16
+# Context=Mimetypes
+# Type=Scalable
+# MinSize=8
+# MaxSize=512
+#
+# ###########
+
+sed -i 's/###########/###################\n\n[scalable/mimetypes\nSize=16\nContext=Mimetypes\nType=Scalable\nMinSize=8\nMaxSize=512\n\n###########/' /usr/share/icons/Mint-Y/index.theme
+
+
+echo "Update gtk icon cache..."
+gtk-update-icon-cache /path/to/the/theme/folder
+
+echo "Done."
