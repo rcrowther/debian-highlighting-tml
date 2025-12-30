@@ -34,7 +34,7 @@ Shutdown all text editors and restart
 == Set Icon
 NB: Only for my setup. Paths will need adjusting for other themes.
 
-sudo mkdir /usr/share/icons/Mint-Y/mimetypes/scaleable
+sudo mkdir /usr/share/icons/Mint-Y/mimetypes/scalable
 sudo nano /usr/share/icons/Mint-Y/index.theme
 
 In nano add,
