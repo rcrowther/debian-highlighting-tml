@@ -31,7 +31,7 @@ echo -e "\nAdding TML definition..."
 mkdir -p ~/.local/share/gtksourceview-4/language-specs/
 mkdir -p ~/.local/share/gtksourceview-5/language-specs/
 #cp tml.lang ~/.local/share/gtksourceview-3.0/language-specs/
-cp tml.lang ~/.local/shar/gtksourceview-4/language-specs/ 
+cp tml.lang ~/.local/share/gtksourceview-4/language-specs/ 
 cp tml.lang ~/.local/share/gtksourceview-5/language-specs/ 
 
 

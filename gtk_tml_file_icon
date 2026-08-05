@@ -1,18 +1,18 @@
 #! /bin/bash
 
 echo "Insert the icon in theme Mint-Y..."
-mkdir -p /usr/share/icons/Mint-Y/scalable/mimetypes
-cp text-x-tml.svg /usr/share/icons/Mint-Y/scalable/mimetypes
+mkdir -p /usr/share/icons/Mint-Y/mimetypes/scalable
+cp text-x-tml.svg /usr/share/icons/Mint-Y/mimetypes/scalable
 
 echo "Add search directory to index..."
-sed -i 's/Directories=/Directories=scalable/mimetypes,/' /usr/share/icons/Mint-Y/index.theme
+sed -i 's/Directories=/Directories=mimetypes/scalable,/' /usr/share/icons/Mint-Y/index.theme
 
 echo "Insert to index definition stanza..."
 
 # i.e.
 # ###################
 # 
-# [scalable/mimetypes]
+# [mimetypes/scalable]
 # Size=16
 # Context=Mimetypes
 # Type=Scalable
@@ -21,7 +21,7 @@ echo "Insert to index definition stanza..."
 #
 # ###########
 
-sed -i 's/###########/###################\n\n[scalable/mimetypes\nSize=16\nContext=Mimetypes\nType=Scalable\nMinSize=8\nMaxSize=512\n\n###########/' /usr/share/icons/Mint-Y/index.theme
+sed -i 's/###########/###################\n\n[mimetypes/scalable\nSize=16\nContext=Mimetypes\nType=Scalable\nMinSize=8\nMaxSize=512\n\n###########/' /usr/share/icons/Mint-Y/index.theme
 
 
 echo "Update gtk icon cache..."
